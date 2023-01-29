@@ -1,12 +1,38 @@
+puts "Check the weather in which city?"
+city = gets.chomp
+city = city.gsub(" ", "")
+
 # DON'T CHANGE THIS CODE
 # ----------------------
 require "net/http"
 require "json"
-url = "https://weatherdbi.herokuapp.com/data/weather/chicago"
+url = "https://weatherdbi.herokuapp.com/data/weather/#{city}"
 uri = URI(url)
 response = Net::HTTP.get(uri)
 weather_data = JSON.parse(response)
 # ----------------------
+
+puts weather_data
+
+if weather_data["status"] == "fail"
+puts "we don't know that city.  try again."
+else
+
+current_temp = weather_data["currentConditions"]["temp"]["f"]
+current_condition = weather_data["currentConditions"]["comment"]
+puts "In Chicago, IL it is currently #{current_temp} and #{current_condition}"
+
+
+todays_forecast = weather_data["next days"][0]
+puts "The rest of today will be a high of #{today_forecast["max_temp"]["f"]} and #{today_forecast["comment"]}."
+
+puts "The upcoming weather forecast is:"
+for daily_forecast_data in weather_data["next_days"]
+  day_of_week = daily_forecast_data["day"]
+  high_temp = daily_forecast_data["max_temp"]["f"]
+  conditions = daily_forecast_data["comment"]
+  puts "#{day_of_week}: a high of #{high_temp} and #{conditions}."
+end
 
 # EXERCISE
 # Using the Ruby hash `weather_data` that includes weather forecast data for Chicago,
